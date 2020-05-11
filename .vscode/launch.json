@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MagneticMoose",
+            "request": "launch",
+            "mainClass": "me.mtk.magneticmoose.MagneticMoose",
+            "projectName": "magnetic-moose_93193c40",
+            "cwd": "${workspaceFolder}/me/mtk/magneticmoose",
+            "args": "program.in"
+        }
+    ]
+}

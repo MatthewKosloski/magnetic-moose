@@ -103,23 +103,7 @@ public class Lexer
             default:
                 if (Character.isDigit(currentChar))
                 {
-                    int startColumn = currentColumnNumber;
-
-                    // Consume the integer, or if a decimal number,
-                    // the left-hand side.
-                    while (Character.isDigit(peek())) consume();
-
-                    if (peek() == '.' && Character.isDigit(peekNext()))
-                    {
-                        // Consume the decimal
-                        consume();
-
-                        // Consume the right hand side of the decimal
-                        while (Character.isDigit(peek())) consume();
-                    }
-
-                    tokens.add(new Token(TokenType.NUMBER, getLexeme(), 
-                        Double.parseDouble(getLexeme()), currentLineNumber, startColumn));
+                    number();
                 }
                 else if (Character.isWhitespace(currentChar))
                 {
@@ -204,6 +188,36 @@ public class Lexer
     {
         nextChar();
         currentColumnNumber++;
+    }
+
+    /*
+     * Handles the scanning of numbers, both integer
+     * and decimal. 
+     */
+    private void number()
+    {
+        // Cache the column number at this point
+        // because consume() updates the column.
+        int startColumn = currentColumnNumber;
+
+        // Consume the integer, or if a decimal number,
+        // the left-hand side.
+        while (Character.isDigit(peek())) consume();
+
+        if (peek() == '.' && Character.isDigit(peekNext()))
+        {
+            // Consume the decimal
+            consume();
+
+            // Consume the right hand side of the decimal
+            while (Character.isDigit(peek())) consume();
+        }
+
+        double literal = Double.parseDouble(getLexeme());
+        Token token = new Token(TokenType.NUMBER, getLexeme(), literal, 
+            currentLineNumber, startColumn);
+        
+        tokens.add(token);
     }
 
     /*

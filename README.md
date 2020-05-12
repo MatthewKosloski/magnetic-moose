@@ -9,9 +9,9 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 ```
 (+ 4 4)
 (+ 1 2 3)
-(+ 5 (* 2 2) 6)
+(+ 5 (* 2 2.25) 6)
 (* (+ 2 3) 2)
-(* (- (* 10 5) 10) 2)
+(* (- (* 10.5 5) 10) 2)
 ```
 
 The grammar is:
@@ -20,6 +20,6 @@ The grammar is:
 program      -> expression ;
 expression   -> "(" operator operand operand+ ")" ;
 operator     -> "+" | "-" | "*" | "/" ;
-operand      -> integer | expression ;
-integer      -> [0-9]+ ;
+operand      -> number | expression ;
+number      -> [0-9]+ "." [0-9]+ | [0-9]+;
 ```

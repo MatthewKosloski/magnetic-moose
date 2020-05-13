@@ -97,7 +97,7 @@ public class Lexer
                 {
                     // Current and next character are '/', denoting
                     // the start of a comment
-                    consumeComment();
+                    consumeInlineComment();
                 } 
                 else
                 {
@@ -190,7 +190,7 @@ public class Lexer
      * Consumes a comment, silently advancing the position
      * in the source program. 
      */
-    private void consumeComment()
+    private void consumeInlineComment()
     {
         while (peek() != '\n' && !isEndOfFile()) consume();
     }

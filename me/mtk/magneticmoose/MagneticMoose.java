@@ -66,7 +66,7 @@ public class MagneticMoose
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
-        while(true)
+        while (true)
         {
             System.out.print("> ");               
 			run(reader.readLine());
@@ -88,7 +88,7 @@ public class MagneticMoose
         List<Token> tokens = lexer.getTokens();
 
         // Print the tokens for now
-        for(Token token : tokens)
+        for (Token token : tokens)
             System.out.println(token);
     }
 }

@@ -88,6 +88,7 @@ public class Lexer
             // New line character
             case '\n':
                 currentLineNumber++;
+                currentColumnNumber = 1;
                 break;
 
             // Comment and binary division character
@@ -112,7 +113,7 @@ public class Lexer
                 }
                 else if (Character.isWhitespace(currentChar))
                 {
-                    // Ignore whitespace
+                    currentColumnNumber++;
                 }
                 else
                 {
@@ -121,14 +122,10 @@ public class Lexer
                         " found", currentChar);
                     MagneticMoose.error(errMsg, currentLineNumber, 
                         currentColumnNumber); 
+                    currentColumnNumber++;
                 }
                 break;
         }
-        
-        if(currentChar == '\n')
-            currentColumnNumber = 1;
-        else
-            currentColumnNumber++;
     }
 
     /*
@@ -216,10 +213,7 @@ public class Lexer
         }
 
         double literal = Double.parseDouble(getLexeme());
-        Token token = new Token(TokenType.NUMBER, getLexeme(), literal, 
-            currentLineNumber, startColumn);
-        
-        tokens.add(token);
+        addToken(TokenType.NUMBER, literal, currentLineNumber, startColumn);
     }
 
     /*
@@ -249,12 +243,26 @@ public class Lexer
      * 
      * @param type The type of the token 
      * @param literal The literal value (if number)
+     * @param line The line at which the token is located
+     * @param column The starting column at which the token is located
+     */
+    private void addToken(TokenType type, Object literal, int line, int column)
+    {
+        Token token = new Token(type, getLexeme(), literal, line, column);
+        tokens.add(token);
+
+        currentColumnNumber++;
+    }
+
+    /*
+     * Adds a token to the accumulated list of tokens.
+     * 
+     * @param type The type of the token 
+     * @param literal The literal value (if number)
      */
     private void addToken(TokenType type, Object literal)
     {
-        Token token = new Token(type, getLexeme(), literal, 
-            currentLineNumber, currentColumnNumber);
-        tokens.add(token);
+        addToken(type, literal, currentLineNumber, currentColumnNumber);
     }
 
     /*

@@ -123,14 +123,12 @@ public class Lexer
                         currentColumnNumber); 
                 }
                 break;
-            
         }
         
         if(currentChar == '\n')
             currentColumnNumber = 1;
         else
             currentColumnNumber++;
-
     }
 
     /*

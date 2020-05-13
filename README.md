@@ -26,5 +26,5 @@ program      -> expression ;
 expression   -> "(" operator operand operand+ ")" ;
 operator     -> "+" | "-" | "*" | "/" ;
 operand      -> number | expression ;
-number      -> [0-9]+ "." [0-9]+ | [0-9]+;
+number       -> [0-9]+ "." [0-9]+ | [0-9]+;
 ```

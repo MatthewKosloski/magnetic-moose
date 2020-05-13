@@ -50,7 +50,7 @@ public class Lexer
      */
     public List<Token> getTokens()
     {
-        while(!isEndOfFile())
+        while (!isEndOfFile())
         {
             // We are at the beginning of the next lexeme
             lexemeStart = position;
@@ -144,7 +144,7 @@ public class Lexer
     {
         // There is no next character, so return 
         // the null character.
-        if(isEndOfFile()) return '\0';
+        if (isEndOfFile()) return '\0';
 
         return source.charAt(position);
     }
@@ -156,7 +156,7 @@ public class Lexer
      */
     private char peekNext()
     {
-        if(position + 1 >= source.length())
+        if (position + 1 >= source.length())
         {
             // There is no next character, so return 
             // the null character.
@@ -174,7 +174,7 @@ public class Lexer
      */
     private boolean match(char c)
     {
-        if(source.charAt(position) != c || isEndOfFile()) return false;
+        if (source.charAt(position) != c || isEndOfFile()) return false;
 
         consume();
         return true;
@@ -209,7 +209,7 @@ public class Lexer
     {
         char consumedChar = nextChar();
 
-        if(consumedChar == '\n')
+        if (consumedChar == '\n')
         {
             currentLineNumber++;
             currentColumnNumber = 1;
@@ -308,5 +308,4 @@ public class Lexer
     {
         return c >= '0' && c <= '9';
     }
-
 }

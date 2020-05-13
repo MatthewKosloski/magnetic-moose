@@ -28,12 +28,15 @@ public class MagneticMoose
 
     /**
      * Reports an error message to the user.
-     * @param token
-     * @param message
+     *
+     * @param message A custom message describing the error.
+     * @param line The line number where the error is located.
+     * @param column The column number where the error is located.
      */
-    public static void error(Token token, String message)
+    public static void error(String message, int line, int column)
     {
-        System.err.println(message);
+        System.err.format("Error on line %d, column %d: %s.\n", line, 
+            column, message);
         hadError = true;
     }
 

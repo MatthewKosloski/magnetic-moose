@@ -15,6 +15,15 @@ public class MagneticMoose
     // and prevents the execution of the code.
     static boolean hadError = false;
 
+    // Indicates whether the interpreter is running
+    // in interactive mode or non-interactive mode (with
+    // a file).
+    static boolean isInteractive = false;
+
+    // The name of the file when running in 
+    // non-interactive mode.
+    static String filename;
+
     public static void main(String[] args) throws IOException
     {
         if (args.length > 1) 
@@ -23,9 +32,15 @@ public class MagneticMoose
             System.exit(64);
         }
         else if (args.length == 1)
+        {
+            filename = args[0];
             runFile(args[0]);
+        }
         else
+        {
+            isInteractive = true;
             runPrompt();
+        }
     }
 
     /**
@@ -37,8 +52,15 @@ public class MagneticMoose
      */
     public static void error(String message, int line, int column)
     {
-        System.err.format("Error on line %d, column %d: %s.\n", line, 
-            column, message);
+        if(!isInteractive)
+        {
+            System.err.format("%s:%d:%d: error: %s\n", filename, 
+                line, column, message);
+        }
+        else
+        {
+            System.err.format("Error on column %d: %s\n", column, message);
+        }
         hadError = true;
     }
 

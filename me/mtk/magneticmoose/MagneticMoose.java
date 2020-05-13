@@ -75,7 +75,9 @@ public class MagneticMoose
     }
 
     /**
-     * Scans the source program and executes it.
+     * Scans the source program for tokens,
+     * creates an AST from the tokens, and 
+     * executes the AST.
      * 
      * @param source A source program writtin in the
      * language being interpreted.

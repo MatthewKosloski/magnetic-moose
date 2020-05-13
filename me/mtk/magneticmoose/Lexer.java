@@ -65,6 +65,11 @@ public class Lexer
         return tokens;
     }
 
+    /*
+     * Starting at the current position in the source program,
+     * scans the source program for a Token with the help of
+     * lookahead characters.
+     */
     private void scanToken()
     {
         char currentChar = nextChar();
@@ -128,7 +133,7 @@ public class Lexer
 
     }
 
-    /**
+    /*
      * Returns the next character of the source program that is to be
      * scanned by the Lexer and advances the position in the source program.
      * 

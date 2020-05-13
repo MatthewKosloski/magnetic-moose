@@ -11,6 +11,8 @@ import java.util.List;
 public class MagneticMoose
 {
 
+    // Indicates if there is a known error
+    // and prevents the execution of the code.
     static boolean hadError = false;
 
     public static void main(String[] args) throws IOException

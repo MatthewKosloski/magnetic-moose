@@ -96,7 +96,10 @@ public class Lexer
                 if (match('/'))
                     consumeInlineComment();
                 else if (match('*'))
+                {
+                    currentColumnNumber++;
                     consumeBlockComment();
+                }
                 else
                     addToken(TokenType.SLASH, null);
                 break;
@@ -146,7 +149,9 @@ public class Lexer
         // the null character.
         if (isEndOfFile()) return '\0';
 
-        return source.charAt(position);
+        char peek = source.charAt(position);
+        
+        return peek;
     }
 
     /*
@@ -162,7 +167,10 @@ public class Lexer
             // the null character.
             return '\0';
         }
-        return source.charAt(position + 1);
+        
+        char peekNext = source.charAt(position + 1);
+
+        return peekNext;
     }
 
     /*

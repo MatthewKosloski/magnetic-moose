@@ -7,15 +7,29 @@ Instead of building it all in one go (which would be too overwhelming), I decide
 Magnetic Moose is the first iteration of the Torrey interpreter.  The interpreter only interprets fully-parenthesized arithmetic expressions such as:
 
 ```
-// This is a single-line comment
+// This is an inline-comment
 
 (+ 4 4)
 (+ 1 2 3)
 
-// This is a 
-// multi-line comment!
+// These
+// are
+// multiple
+// inline comments!
 (+ 5 (* 2 2.25) 6)
+
+/* This is an inline C-style comment block */
+
 (* (+ 2 3) 2)
+
+/*
+    This is a multi-line
+    C-style comment block :)
+*/ (/ 47 7)
+
+/*
+    ...and another one
+*/
 (* (- (* 10.5 5) 10) 2)
 ```
 

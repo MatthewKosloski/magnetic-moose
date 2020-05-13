@@ -44,6 +44,7 @@ public class MagneticMoose
 
     /*
      * Reads and executes the file at the given path. 
+     * 
      * @param path A path to a file.
      * @throws IOException 
      */
@@ -64,6 +65,7 @@ public class MagneticMoose
      * Runs the interpreter in interactive mode, allowing
      * the user to type source language into the console
      * and execute it directly.
+     * 
      * @throws IOException
      */
     private static void runPrompt() throws IOException

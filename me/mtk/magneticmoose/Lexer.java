@@ -80,7 +80,7 @@ public class Lexer
             case '(': addToken(TokenType.LPAREN, null); break;
             case ')': addToken(TokenType.RPAREN, null); break;
 
-            // Binary arithmetic characters
+            // Binary arithmetic operators
             case '+': addToken(TokenType.PLUS, null); break;
             case '-': addToken(TokenType.MINUS, null); break;
             case '*': addToken(TokenType.STAR, null); break;
@@ -91,19 +91,14 @@ public class Lexer
                 currentColumnNumber = 1;
                 break;
 
-            // Comment and binary division character
+            // Comments and binary division operator
             case '/': 
-                if (peek() == '/')
-                {
-                    // Current and next character are '/', denoting
-                    // the start of a comment
+                if (match('/'))
                     consumeInlineComment();
-                } 
+                else if (match('*'))
+                    consumeBlockComment();
                 else
-                {
-                    // Division
                     addToken(TokenType.SLASH, null);
-                }
                 break;
 
             default:
@@ -113,7 +108,7 @@ public class Lexer
                 }
                 else if (Character.isWhitespace(currentChar))
                 {
-                    currentColumnNumber++;
+                    currentColumnNumber++; 
                 }
                 else
                 {
@@ -122,7 +117,7 @@ public class Lexer
                         " found", currentChar);
                     MagneticMoose.error(errMsg, currentLineNumber, 
                         currentColumnNumber); 
-                    currentColumnNumber++;
+                    currentColumnNumber++; 
                 }
                 break;
         }
@@ -167,7 +162,6 @@ public class Lexer
             // the null character.
             return '\0';
         }
-    
         return source.charAt(position + 1);
     }
 
@@ -187,7 +181,7 @@ public class Lexer
     }
 
     /*
-     * Consumes a comment, silently advancing the position
+     * Consumes an inline comment, silently advancing the position
      * in the source program. 
      */
     private void consumeInlineComment()
@@ -196,12 +190,34 @@ public class Lexer
     }
 
     /*
+     * Consumes a C-style block comment, silently advancing the position
+     * in the source program.
+     */
+    private void consumeBlockComment()
+    {
+        while (peek() != '*' && peekNext() != '/' && !isEndOfFile()) consume();       
+        
+        // Consume the closing */
+        consume();  
+        consume();
+    }
+
+    /*
      * Silently advances the position in the source program.
      */
     private void consume()
     {
-        nextChar();
-        currentColumnNumber++;
+        char consumedChar = nextChar();
+
+        if(consumedChar == '\n')
+        {
+            currentLineNumber++;
+            currentColumnNumber = 1;
+        }
+        else
+        {
+            currentColumnNumber++;
+        }
     }
 
     /*
@@ -211,7 +227,8 @@ public class Lexer
     private void number()
     {
         // Cache the column number at this point
-        // because consume() updates the column.
+        // because subsequent calls to consume()
+        // will update the column number.
         int startColumn = currentColumnNumber;
 
         // Consume the integer, or if a decimal number,

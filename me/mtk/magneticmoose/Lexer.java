@@ -172,6 +172,21 @@ public class Lexer
     }
 
     /*
+     * If the next character is c, then consume it and return true. 
+     *  
+     * @param c The character for which we would like to find a match.
+     * @return True if the first character of lookahead is the provided
+     * character c; False otherwise.
+     */
+    private boolean match(char c)
+    {
+        if(source.charAt(position) != c || isEndOfFile()) return false;
+
+        consume();
+        return true;
+    }
+
+    /*
      * Consumes a comment, silently advancing the position
      * in the source program. 
      */

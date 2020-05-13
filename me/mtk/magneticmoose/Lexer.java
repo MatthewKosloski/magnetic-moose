@@ -106,7 +106,7 @@ public class Lexer
                 break;
 
             default:
-                if (Character.isDigit(currentChar))
+                if (isDigit(currentChar))
                 {
                     number();
                 }
@@ -204,15 +204,15 @@ public class Lexer
 
         // Consume the integer, or if a decimal number,
         // the left-hand side.
-        while (Character.isDigit(peek())) consume();
+        while (isDigit(peek())) consume();
 
-        if (peek() == '.' && Character.isDigit(peekNext()))
+        if (peek() == '.' && isDigit(peekNext()))
         {
             // Consume the decimal
             consume();
 
             // Consume the right hand side of the decimal
-            while (Character.isDigit(peek())) consume();
+            while (isDigit(peek())) consume();
         }
 
         double literal = Double.parseDouble(getLexeme());
@@ -255,6 +255,18 @@ public class Lexer
         Token token = new Token(type, getLexeme(), literal, 
             currentLineNumber, currentColumnNumber);
         tokens.add(token);
+    }
+
+    /*
+     * Indicates if the provided character is a digit as
+     * specified by the regular expression [0-9].
+     * 
+     * @param c A character
+     * @return True if c is a digit; False otherwise.
+     */
+    private boolean isDigit(char c)
+    {
+        return c >= '0' && c <= '9';
     }
 
 }

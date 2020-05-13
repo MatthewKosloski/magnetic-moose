@@ -7,8 +7,13 @@ Instead of building it all in one go (which would be too overwhelming), I decide
 Magnetic Moose is the first iteration of the Torrey interpreter.  The interpreter only interprets fully-parenthesized arithmetic expressions such as:
 
 ```
+// This is a single-line comment
+
 (+ 4 4)
 (+ 1 2 3)
+
+// This is a 
+// multi-line comment!
 (+ 5 (* 2 2.25) 6)
 (* (+ 2 3) 2)
 (* (- (* 10.5 5) 10) 2)

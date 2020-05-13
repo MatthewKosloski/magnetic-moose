@@ -186,8 +186,7 @@ public class Lexer
     }
 
     /*
-     * Advances the position in the source program without
-     * returning the next character. 
+     * Silently advances the position in the source program.
      */
     private void consume()
     {

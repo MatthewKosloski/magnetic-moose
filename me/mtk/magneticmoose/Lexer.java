@@ -129,7 +129,7 @@ public class Lexer
             currentLineNumber++;
             currentColumnNumber = 0;
         }
-        else if (nextChar != '\r')
+        else
             currentColumnNumber++;
 
         return nextChar;

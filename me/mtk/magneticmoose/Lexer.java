@@ -22,9 +22,9 @@ public class Lexer
     private int currentLineNumber = 1;
 
     // The current column of the line in source that is currently
-    // being processed. This is reset to 1 whenever a new line
+    // being processed. This is reset whenever a new line
     // whitespace character is encountered.
-    private int currentColumnNumber = 1;
+    private int currentColumnNumber = 0;
 
     // The index (in source) of the first character of the
     // lexeme currently being processed. This gets reset when
@@ -60,7 +60,7 @@ public class Lexer
 
         // Append the end-of-file token to the list
         tokens.add(new Token(TokenType.EOF, "", null,
-            currentLineNumber, currentColumnNumber));
+            currentLineNumber, ++currentColumnNumber));
         
         return tokens;
     }
@@ -85,33 +85,22 @@ public class Lexer
             case '-': addToken(TokenType.MINUS, null); break;
             case '*': addToken(TokenType.STAR, null); break;
 
-            // New line character
-            case '\n':
-                currentLineNumber++;
-                currentColumnNumber = 1;
-                break;
-
             // Comments and binary division operator
             case '/': 
-                if (match('/'))
+                if (match('/')) 
                     consumeInlineComment();
-                else if (match('*'))
-                {
-                    currentColumnNumber++;
+                else if (match('*')) 
                     consumeBlockComment();
-                }
-                else
+                else 
                     addToken(TokenType.SLASH, null);
                 break;
 
             default:
                 if (isDigit(currentChar))
-                {
                     number();
-                }
-                else if (Character.isWhitespace(currentChar))
+                else if (isWhitespace(currentChar))
                 {
-                    currentColumnNumber++; 
+                    // Ignore whitespace
                 }
                 else
                 {
@@ -120,7 +109,6 @@ public class Lexer
                         " found", currentChar);
                     MagneticMoose.error(errMsg, currentLineNumber, 
                         currentColumnNumber); 
-                    currentColumnNumber++; 
                 }
                 break;
         }
@@ -134,7 +122,17 @@ public class Lexer
      */
     private char nextChar()
     {
-        return source.charAt(position++);
+        char nextChar = source.charAt(position++);
+        
+        if (nextChar == '\n')
+        {
+            currentLineNumber++;
+            currentColumnNumber = 0;
+        }
+        else if (nextChar != '\r')
+            currentColumnNumber++;
+
+        return nextChar;
     }
 
      /*
@@ -184,7 +182,7 @@ public class Lexer
     {
         if (source.charAt(position) != c || isEndOfFile()) return false;
 
-        consume();
+        nextChar();
         return true;
     }
 
@@ -194,7 +192,7 @@ public class Lexer
      */
     private void consumeInlineComment()
     {
-        while (peek() != '\n' && !isEndOfFile()) consume();
+        while (peek() != '\n' && !isEndOfFile()) nextChar();
     }
 
     /*
@@ -203,29 +201,11 @@ public class Lexer
      */
     private void consumeBlockComment()
     {
-        while (peek() != '*' && peekNext() != '/' && !isEndOfFile()) consume();       
+        while (peek() != '*' && peekNext() != '/' && !isEndOfFile()) nextChar();       
         
         // Consume the closing */
-        consume();  
-        consume();
-    }
-
-    /*
-     * Silently advances the position in the source program.
-     */
-    private void consume()
-    {
-        char consumedChar = nextChar();
-
-        if (consumedChar == '\n')
-        {
-            currentLineNumber++;
-            currentColumnNumber = 1;
-        }
-        else
-        {
-            currentColumnNumber++;
-        }
+        nextChar();  
+        nextChar();
     }
 
     /*
@@ -235,21 +215,21 @@ public class Lexer
     private void number()
     {
         // Cache the column number at this point
-        // because subsequent calls to consume()
+        // because subsequent calls to nextChar()
         // will update the column number.
         int startColumn = currentColumnNumber;
 
         // Consume the integer, or if a decimal number,
         // the left-hand side.
-        while (isDigit(peek())) consume();
+        while (isDigit(peek())) nextChar();
 
         if (peek() == '.' && isDigit(peekNext()))
         {
             // Consume the decimal
-            consume();
+            nextChar();
 
             // Consume the right hand side of the decimal
-            while (isDigit(peek())) consume();
+            while (isDigit(peek())) nextChar();
         }
 
         double literal = Double.parseDouble(getLexeme());
@@ -290,8 +270,6 @@ public class Lexer
     {
         Token token = new Token(type, getLexeme(), literal, line, column);
         tokens.add(token);
-
-        currentColumnNumber++;
     }
 
     /*
@@ -316,4 +294,17 @@ public class Lexer
     {
         return c >= '0' && c <= '9';
     }
+
+    /**
+     * Indicates if the provided character is a white space
+     * character.
+     * 
+     * @param c A character 
+     * @return True if c is white space; False otherwise.
+     */
+    private boolean isWhitespace(char c)
+    {
+        return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+    }
+
 }

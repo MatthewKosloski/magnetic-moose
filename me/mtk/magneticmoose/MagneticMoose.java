@@ -117,7 +117,15 @@ public class MagneticMoose
         List<Token> tokens = lexer.getTokens();
 
         // Print the tokens for now
-        for (Token token : tokens)
-            System.out.println(token);
+        // for (Token token : tokens)
+        //     System.out.println(token);
+
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
+
     }
 }

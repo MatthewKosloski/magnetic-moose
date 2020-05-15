@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - AstPrinter",
+            "request": "launch",
+            "mainClass": "me.mtk.magneticmoose.AstPrinter",
+            "projectName": "magnetic-moose_93193c40"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - MagneticMoose",
             "request": "launch",
             "mainClass": "me.mtk.magneticmoose.MagneticMoose",

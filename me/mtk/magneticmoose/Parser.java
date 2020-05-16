@@ -168,8 +168,10 @@ public class Parser
      */
     private Token nextToken()
     {
-        if (!isAtEnd()) position++;
-        return previous();  
+        if (hasTokens())
+            return tokens.get(position++);
+        else
+            return previous();
     }
 
     /*
@@ -178,9 +180,9 @@ public class Parser
      * @return True if there are no more tokens to process;
      * False otherwise.
      */
-    private boolean isAtEnd()
+    private boolean hasTokens()
     {
-        return peek().type == TokenType.EOF;
+        return peek().type != TokenType.EOF;
     }
 
     /*

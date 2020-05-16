@@ -71,12 +71,12 @@ public class Parser
      */
     private Expr expression()
     {
-        if (isTokenOfType(TokenType.NUMBER))
+        if (match(TokenType.NUMBER))
         {
             // expression -> literal ;
             return literal();
         }
-        else if (isTokenOfType(TokenType.LPAREN))
+        else if (match(TokenType.LPAREN))
         {
             // expression -> arithmetic ;
             return arithmetic();
@@ -104,7 +104,7 @@ public class Parser
      */
     private Expr arithmetic()
     {
-        Token operator = advance();
+        Token operator = nextToken();
         Expr first = expression();
         Expr second = expression();
         consume(TokenType.RPAREN, "Expected ')' after expression.");
@@ -113,21 +113,21 @@ public class Parser
     }
 
     /*
-     * Indicates whether the current token is of one
-     * of the provided types.
+     * If the next token's type matches at least one 
+     * of the provided types, consume it and return true.
      *  
      * @param types A variable number of token types.
-     * @return True if the token type of the current token
+     * @return True if the token type of the next token
      * matches at least one of the provided types; False
      * otherwise.
      */
-    private boolean isTokenOfType(TokenType... types)
+    private boolean match(TokenType... types)
     {
         for (TokenType type : types)
         {
-            if (check(type))
+            if (isNextTokenOfType(type))
             {
-                advance();
+                nextToken();
                 return true;
             }
         }
@@ -136,19 +136,19 @@ public class Parser
 
     private Token consume(TokenType type, String msg)
     {
-        if (check(type)) return advance();
+        if (isNextTokenOfType(type)) return nextToken();
         throw error(peek(), msg);
     }
 
-    private boolean check(TokenType type)
+    private boolean isNextTokenOfType(TokenType type)
     {
         return peek().type == type;
     }
 
-    private Token advance()
+    private Token nextToken()
     {
         if (!isAtEnd()) position++;
-        return previous();
+        return previous();  
     }
 
     private boolean isAtEnd()

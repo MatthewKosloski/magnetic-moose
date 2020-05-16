@@ -134,38 +134,82 @@ public class Parser
         return false;
     }
 
+    /*
+     * Returns the next token if its type is of the provided type.
+     * 
+     * @param type The type of the token.
+     * @param msg The error message to display if the next token
+     * is not of the provided type.
+     * @return The next token
+     * @throws ParseError if next token is not of the provided type.
+     */
     private Token consume(TokenType type, String msg)
     {
         if (isNextTokenOfType(type)) return nextToken();
         throw error(peek(), msg);
     }
 
+    /*
+     * Indicates if the next token is of the provided type.
+     * 
+     * @param type The type of the token.
+     * @return True if the next token's TokenType is equal to
+     * type; False otherwise.
+     */
     private boolean isNextTokenOfType(TokenType type)
     {
         return peek().type == type;
     }
 
+    /*
+     * Gets the next token.
+     * 
+     * @return The next token.
+     */
     private Token nextToken()
     {
         if (!isAtEnd()) position++;
         return previous();  
     }
 
+    /*
+     * Indicates if there are more tokens to process.
+     * 
+     * @return True if there are no more tokens to process;
+     * False otherwise.
+     */
     private boolean isAtEnd()
     {
         return peek().type == TokenType.EOF;
     }
 
+    /*
+     * Returns the next token.
+     * 
+     * @return The next token.
+     */
     private Token peek()
     {
         return tokens.get(position);
     }
 
+    /*
+     * Returns the previously consumed token.
+     * 
+     * @return The previously consumed token.
+     */
     private Token previous()
     {
         return tokens.get(position - 1);
     }
 
+    /*
+     * Error handler.
+     * 
+     * @param token The token the caused the error.
+     * @param msg The error message.
+     * @return a parse error.
+     */
     private ParseError error(Token token, String msg)
     {
         MagneticMoose.error(msg, token.line, token.column);

@@ -120,7 +120,8 @@ public class Parser
             expr = new Expr.Arithmetic(operator, expr, second);
         }
 
-        consume(TokenType.RPAREN, "Expected ')' after expression " + "but got '" + peek().lexeme + "' instead.");
+        consume(TokenType.RPAREN, String.format("Expected \")\" after " +
+            "expression but got \"%s\" instead.", peek().lexeme));
         
         return expr;
     }

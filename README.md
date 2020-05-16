@@ -36,7 +36,7 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 The grammar is:
 
 ```
-program      -> expression+ ;
+program      -> expression ;
 expression   -> literal | arithmetic ;
 literal      -> number ;
 arithmetic   -> "(" operator expression (" " expression)+ ")" ;

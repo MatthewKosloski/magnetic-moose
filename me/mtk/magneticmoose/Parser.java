@@ -105,11 +105,24 @@ public class Parser
     private Expr arithmetic()
     {
         Token operator = nextToken();
+
         Expr first = expression();
         Expr second = expression();
-        consume(TokenType.RPAREN, "Expected ')' after expression.");
+        Expr expr = new Expr.Arithmetic(operator, first, second);
+
+        while (match(TokenType.LPAREN, TokenType.NUMBER))
+        {
+            if (previous().type == TokenType.NUMBER)
+                second = literal();
+            else if (previous().type == TokenType.LPAREN)
+                second = arithmetic();
+
+            expr = new Expr.Arithmetic(operator, expr, second);
+        }
+
+        consume(TokenType.RPAREN, "Expected ')' after expression " + "but got '" + peek().lexeme + "' instead.");
         
-        return new Expr.Arithmetic(operator, first, second);
+        return expr;
     }
 
     /*

@@ -17,9 +17,12 @@ public class Parser
     // the Lexer.
     private final List<Token> tokens;
 
-    // Represents the index in tokens of the next
-    // token waiting to be parsed.
-    private int current = 0;
+    // The current position in the token list (an index in tokens).
+    // This member can take on any value in the range [0, n - 1], where
+    // n is the size of tokens. This is the index in tokens of the next
+    // Token that is to be processed. That is, the index of the Token
+    // that is currently being processed is one less than this value.
+    private int position = 0;
 
     /**
      * Constructs a new Parser object, initializing
@@ -144,7 +147,7 @@ public class Parser
 
     private Token advance()
     {
-        if (!isAtEnd()) current++;
+        if (!isAtEnd()) position++;
         return previous();
     }
 
@@ -155,12 +158,12 @@ public class Parser
 
     private Token peek()
     {
-        return tokens.get(current);
+        return tokens.get(position);
     }
 
     private Token previous()
     {
-        return tokens.get(current - 1);
+        return tokens.get(position - 1);
     }
 
     private ParseError error(Token token, String msg)

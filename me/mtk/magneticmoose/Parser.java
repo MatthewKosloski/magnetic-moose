@@ -68,12 +68,12 @@ public class Parser
      */
     private Expr expression()
     {
-        if (match(TokenType.NUMBER))
+        if (isTokenOfType(TokenType.NUMBER))
         {
             // expression -> literal ;
             return literal();
         }
-        else if (match(TokenType.LPAREN))
+        else if (isTokenOfType(TokenType.LPAREN))
         {
             // expression -> arithmetic ;
             return arithmetic();
@@ -109,7 +109,16 @@ public class Parser
         return new Expr.Arithmetic(operator, first, second);
     }
 
-    private boolean match(TokenType... types)
+    /*
+     * Indicates whether the current token is of one
+     * of the provided types.
+     *  
+     * @param types A variable number of token types.
+     * @return True if the token type of the current token
+     * matches at least one of the provided types; False
+     * otherwise.
+     */
+    private boolean isTokenOfType(TokenType... types)
     {
         for (TokenType type : types)
         {

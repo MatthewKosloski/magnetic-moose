@@ -9,6 +9,9 @@ import java.util.List;
 // the source program. That is, the Parser is an implementation
 // of the grammar. Each nonterminal symbol of the grammar
 // is implemented as a method.
+// 
+// The Parser is also responsible for reporting syntax errors
+// to the user.
 public class Parser 
 {
     private static class ParseError extends RuntimeException {}

@@ -4,35 +4,20 @@ abstract class Expr
 {
 	interface Visitor<T>
 	{
-		T visitLiteralExpr(Literal expr);
-		T visitArithmeticExpr(Arithmetic expr);
+		T visitBinaryExpr(Binary expr);
+		T visitUnaryExpr(Unary expr);
+		T visitNumberExpr(Number expr);
 	}
 
 	abstract <T> T accept(Visitor<T> visitor);
 
-	static class Literal extends Expr
-	{
-		final double value;
-
-		public Literal(double value)
-		{
-			this.value = value;
-		}
-
-		@Override
-		public <T> T accept(Visitor<T> visitor)
-		{
-			return visitor.visitLiteralExpr(this);
-		}
-	}
-
-	static class Arithmetic extends Expr
+	static class Binary extends Expr
 	{
 		final Token operator;
 		final Expr first;
 		final Expr second;
 
-		public Arithmetic(Token operator, Expr first, Expr second)
+		public Binary(Token operator, Expr first, Expr second)
 		{
 			this.operator = operator;
 			this.first = first;
@@ -42,7 +27,41 @@ abstract class Expr
 		@Override
 		public <T> T accept(Visitor<T> visitor)
 		{
-			return visitor.visitArithmeticExpr(this);
+			return visitor.visitBinaryExpr(this);
+		}
+	}
+
+	static class Unary extends Expr
+	{
+		final Token operator;
+		final Expr right;
+
+		public Unary(Token operator, Expr right)
+		{
+			this.operator = operator;
+			this.right = right;
+		}
+
+		@Override
+		public <T> T accept(Visitor<T> visitor)
+		{
+			return visitor.visitUnaryExpr(this);
+		}
+	}
+
+	static class Number extends Expr
+	{
+		final double value;
+
+		public Number(double value)
+		{
+			this.value = value;
+		}
+
+		@Override
+		public <T> T accept(Visitor<T> visitor)
+		{
+			return visitor.visitNumberExpr(this);
 		}
 	}
 }

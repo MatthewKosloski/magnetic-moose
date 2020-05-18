@@ -9,15 +9,31 @@ public class AstPrinter implements Expr.Visitor<String>
     }
 
     @Override 
-    public String visitLiteralExpr(Expr.Literal expr)
+    public String visitBinaryExpr(Expr.Binary expr)
     {
-        return expr.value + "";
+        return parenthesize(expr.operator.lexeme, expr.first, expr.second);
     }
 
     @Override
-    public String visitArithmeticExpr(Expr.Arithmetic expr)
+    public String visitUnaryExpr(Expr.Unary expr)
     {
-        return parenthesize(expr.operator.lexeme, expr.first, expr.second);
+        if (expr.right instanceof Expr.Binary)
+        {
+            Expr.Binary binaryExpr = (Expr.Binary) expr.right;
+            return expr.operator.lexeme + parenthesize(binaryExpr.operator.lexeme, 
+                binaryExpr.first, binaryExpr.second);
+        }
+        else 
+        {
+            Expr.Number numberExpr = (Expr.Number) expr.right;
+            return expr.operator.lexeme + numberExpr.value;
+        }
+    }
+
+    @Override
+    public String visitNumberExpr(Expr.Number expr)
+    {
+        return expr.value + "";
     }
 
     private String parenthesize(String name, Expr... exprs)
@@ -34,16 +50,4 @@ public class AstPrinter implements Expr.Visitor<String>
 
         return builder.toString();
     }
-    
-    public static void main(String[] args)
-    {
-        Token operator = new Token(TokenType.PLUS, "+", null, 1, 1);
-        Expr operand1 = new Expr.Literal(2);
-        Expr operand2 = new Expr.Literal(5);
-        Expr expression = new Expr.Arithmetic(operator, operand1, operand2); 
-        
-        // (+ 2 5)
-        System.out.println(new AstPrinter().print(expression));
-    }
-
 }

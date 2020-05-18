@@ -57,76 +57,95 @@ public class Parser
 
     /*
      * Implements the following production rule:
-     * program -> expression ;
+     * program -> binary ;
      *
      * @return An expression.
      */
     private Expr program()
     {
-        return expression();
+        return binary();
     }
 
     /*
      * Implements the following production rule:
-     * expression -> literal | arithmetic ;
+     * binary -> "(" ("+" | "-" | "*" | "/") unary (" " unary)+ ")" ;
      *
-     * @return An expression.
+     * @return A binary expression.
      */
-    private Expr expression()
+    private Expr binary()
+    {
+        if (match(TokenType.LPAREN))
+        {
+            Token operator = nextToken();
+            Expr first = unary();
+            Expr second = unary();
+            Expr expr = new Expr.Binary(operator, first, second);
+
+            while (peek(TokenType.LPAREN, TokenType.NUMBER, 
+                TokenType.MINUS, TokenType.PLUS))
+            {
+                second = unary();
+                expr = new Expr.Binary(operator, expr, second);
+            }
+    
+            consume(TokenType.RPAREN, String.format("Expected \")\" after " +
+                "expression but got \"%s\" instead.", peek().lexeme));
+            
+            return expr;
+        }
+
+        throw error(peek(), "Expected an expression starting with \"(\".");
+    }
+
+     /*
+     * Implements the following production rule:
+     * unary -> ("+" | "-")? (binary | number) ;
+     *
+     * @return A unary expression.
+     */
+    private Expr unary()
+    {
+        if (match(TokenType.PLUS, TokenType.MINUS))
+        {
+            Token operator = previous();
+            Expr right;
+            if (peek(TokenType.LPAREN))
+                // unary -> ("+" | "-")? binary
+                right = binary();
+            else
+                // unary -> ("+" | "-")? number
+                right = number();
+
+            return new Expr.Unary(operator, right);
+        }
+        else if (peek(TokenType.LPAREN))
+        {
+            // unary -> binary;
+            return binary();
+        }
+        else if (peek(TokenType.NUMBER))
+        {
+            // unary -> number;
+            return number();
+        }
+        
+        throw error(peek(), "Expected an expression starting with either \"(\", \"+\", \"-\", or NUMBER");
+    }
+
+    /*
+     * Implements the following production rule:
+     * number -> [0-9]+ "." [0-9]+ | [0-9]+ ;
+     *
+     * @return A number expression.
+     */
+    private Expr number()
     {
         if (match(TokenType.NUMBER))
         {
-            // expression -> literal ;
-            return literal();
-        }
-        else if (match(TokenType.LPAREN))
-        {
-            // expression -> arithmetic ;
-            return arithmetic();
+            return new Expr.Number((double) previous().literal);
         }
 
-        throw error(peek(), "Expected expression.");
-    }
-
-    /*
-     * Implements the following production rule:
-     * literal -> number ;
-     *
-     * @return An expression.
-     */
-    private Expr literal()
-    {
-        return new Expr.Literal((double) previous().literal);
-    }
-
-    /*
-     * Implements the following production rule:
-     * arithmetic -> "(" operator expression (" " expression)+ ")" ;
-     *
-     * @return An expression.
-     */
-    private Expr arithmetic()
-    {
-        Token operator = nextToken();
-
-        Expr first = expression();
-        Expr second = expression();
-        Expr expr = new Expr.Arithmetic(operator, first, second);
-
-        while (match(TokenType.LPAREN, TokenType.NUMBER))
-        {
-            if (previous().type == TokenType.NUMBER)
-                second = literal();
-            else if (previous().type == TokenType.LPAREN)
-                second = arithmetic();
-
-            expr = new Expr.Arithmetic(operator, expr, second);
-        }
-
-        consume(TokenType.RPAREN, String.format("Expected \")\" after " +
-            "expression but got \"%s\" instead.", peek().lexeme));
-        
-        return expr;
+        throw error(peek(), "Expected a number expression.");
     }
 
     /*
@@ -210,6 +229,23 @@ public class Parser
     private Token peek()
     {
         return tokens.get(position);
+    }
+
+    /*
+     * Indicates whether the next token is one of 
+     * the provided token types.
+     *  
+     * @param types A variable number of token types.
+     * @return True if the next token is one of the provided
+     * token types; False otherwise.
+     */
+    private boolean peek(TokenType... types)
+    {
+        for (TokenType type : types)
+        {
+            if (isNextTokenOfType(type)) return true;
+        }
+        return false;
     }
 
     /*

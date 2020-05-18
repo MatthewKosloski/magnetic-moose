@@ -20,7 +20,7 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 
 /* This is an inline C-style comment block */
 
-(* (+ 2 3) 2)
+(* -(+ +2 -3) -2 +(* 9 -3))
 
 /*
     This is a multi-line
@@ -36,10 +36,8 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 The grammar is:
 
 ```
-program      -> expression ;
-expression   -> literal | arithmetic ;
-literal      -> number ;
-arithmetic   -> "(" operator expression (" " expression)+ ")" ;
-operator     -> "+" | "-" | "*" | "/" ;
-number       -> [0-9]+ "." [0-9]+ | [0-9]+ ;
+program   -> binary ;
+binary    -> "(" ("+" | "-" | "*" | "/") unary (" " unary)+ ")" ;
+unary     -> ("+" | "-")? (binary | number) ;
+number    -> [0-9]+ "." [0-9]+ | [0-9]+ ;
 ```

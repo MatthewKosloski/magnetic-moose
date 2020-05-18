@@ -29,13 +29,27 @@ public class Interpreter implements Expr.Visitor<Object>
     }
 
     @Override
-    public Object visitLiteralExpr(Expr.Literal expr)
+    public Object visitNumberExpr(Expr.Number expr)
     {
         return expr.value;
     }
 
     @Override
-    public Object visitArithmeticExpr(Expr.Arithmetic expr)
+    public Object visitUnaryExpr(Expr.Unary expr)
+    {
+        Token operator = expr.operator;
+        Object right = evaluate(expr.right);
+
+        validateNumberOperand(operator, right);
+
+        if (operator.type == TokenType.MINUS)
+            return - (double) right;
+        else
+            return (double) right;
+    }
+
+    @Override
+    public Object visitBinaryExpr(Expr.Binary expr)
     {
         Token operator = expr.operator;
         Object first = evaluate(expr.first);
@@ -73,6 +87,12 @@ public class Interpreter implements Expr.Visitor<Object>
         return expr.accept(this);
     }
 
+    private void validateNumberOperand(Token operator, Object right)
+    {
+        if (right instanceof Double) return;
+        throw new RuntimeError(operator, "Unary operator must evaluate to numbers.");
+    }
+
     /*
      * Checks the type of the operands of the binary expression,
      * ensuring that they are numbers.
@@ -85,7 +105,7 @@ public class Interpreter implements Expr.Visitor<Object>
         Object first, Object second)
     {
         if (first instanceof Double && second instanceof Double) return;
-        throw new RuntimeError(operator, "Binary operators must be numbers.");
+        throw new RuntimeError(operator, "Binary operators must evaluate to numbers.");
     }
 
     /*

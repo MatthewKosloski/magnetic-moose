@@ -52,7 +52,10 @@ public class Interpreter implements Expr.Visitor<Object>
             case STAR:
                 return (double) first * (double) second;
             case SLASH:
-                return (double) first / (double) second;
+                if ((double) second == 0)
+                    throw new RuntimeError(operator, "Cannot divide by 0.");
+                else
+                    return (double) first / (double) second;
         }
 
         return null;

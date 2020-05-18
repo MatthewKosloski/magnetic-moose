@@ -180,10 +180,35 @@ public class Lexer
      */
     private boolean match(char c)
     {
-        if (source.charAt(position) != c || isEndOfFile()) return false;
+        if (peek() == c)
+        {
+            nextChar();
+            return true;
+        }
 
-        nextChar();
-        return true;
+        return false;
+    }
+
+    /*
+     * If the next character is a (first character of lookahead)
+     * and the next next character is b (second character of lookahead),
+     * then consume the characters and return true.
+     * 
+     * @param a The first character for which we would like to find a match.
+     * @param b The character after a for which we would like to find a match.
+     * @return True if the first character of lookahead is a and the second
+     * character of lookahead is b; False otherwise.
+     */
+    private boolean match(char a, char b)
+    {
+        if (peek() == a && peekNext() == b)
+        {
+            nextChar();
+            nextChar();
+            return true;
+        }
+        
+        return false;
     }
 
     /*
@@ -201,12 +226,7 @@ public class Lexer
      */
     private void consumeBlockComment()
     {
-        while ((peek() != '*' && peekNext() != '/' 
-            || peek() == '*' && peekNext() != '/') && !isEndOfFile()) nextChar();
-        
-        // Consume the closing */
-        nextChar();  
-        nextChar();
+        while (!match('*', '/')) nextChar();
     }
 
     /*

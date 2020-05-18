@@ -94,6 +94,21 @@ public class MagneticMoose
         hadRuntimeError = true;
     }
 
+    /**
+     * Scans the source program for tokens,
+     * creates an AST from the tokens, and 
+     * executes the AST.
+     * 
+     * @param source A source program writtin in the
+     * language being interpreted.
+     */
+    private static void run(String source)
+    {
+        List<Token> tokens = new Lexer(source).getTokens();
+        Expr expression = new Parser(tokens).parse();
+        System.out.println(interpreter.interpret(expression));
+    }
+
     /*
      * Reads and executes the file at the given path. 
      * 
@@ -132,35 +147,5 @@ public class MagneticMoose
 			run(reader.readLine());
 			hadError = false;
         }
-    }
-
-    /**
-     * Scans the source program for tokens,
-     * creates an AST from the tokens, and 
-     * executes the AST.
-     * 
-     * @param source A source program writtin in the
-     * language being interpreted.
-     */
-    private static void run(String source)
-    {
-        Lexer lexer = new Lexer(source);
-        List<Token> tokens = lexer.getTokens();
-
-        // Print the tokens for now
-        // for (Token token : tokens)
-        //     System.out.println(token);
-
-        Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
-
-        String value = interpreter.interpret(expression);
-
-        System.out.println(value);
-
-        if (hadError) return;
-
-        // System.out.println(new AstPrinter().print(expression));
-
     }
 }

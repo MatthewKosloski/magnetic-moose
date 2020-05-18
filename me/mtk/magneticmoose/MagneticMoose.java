@@ -11,9 +11,17 @@ import java.util.List;
 public class MagneticMoose
 {
 
+    // An instance of an interpreter. Is static final
+    // because it is to be reused to store programa state.
+    static final Interpreter interpreter = new Interpreter();
+
     // Indicates if there is a known error
     // and prevents the execution of the code.
     static boolean hadError = false;
+
+    // Indicates if a RuntimeError was thrown while
+    // the Interpreter was evaluating the program.
+    static boolean hadRuntimeError = false;
 
     // Indicates whether the interpreter is running
     // in interactive mode or non-interactive mode (with
@@ -44,7 +52,7 @@ public class MagneticMoose
     }
 
     /**
-     * Reports an error message to the user.
+     * Sends an error message to the standard error stream.
      *
      * @param message A custom message describing the error.
      * @param line The line number where the error is located.
@@ -64,6 +72,28 @@ public class MagneticMoose
         hadError = true;
     }
 
+    /**
+     * Sends a RuntimeError message to the standard error stream.
+     * 
+     * @param err A Runtime error.
+     */
+    public static void runtimeError(RuntimeError err)
+    {
+        Token token = err.token;
+
+        if(!isInteractive)
+        {
+            System.err.format("%s:%d:%d: RuntimeError: %s\n", filename, 
+                token.line, token.column, err.getMessage());
+        }
+        else
+        {
+            System.err.format("RuntimeError on column %d: %s\n", 
+                token.column, err.getMessage());
+        }
+        hadRuntimeError = true;
+    }
+
     /*
      * Reads and executes the file at the given path. 
      * 
@@ -80,7 +110,8 @@ public class MagneticMoose
 		run(source);
 		
 		// Indicate an error in the exit code.
-		if (hadError) System.exit(65);
+        if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
 
     /*
@@ -123,9 +154,13 @@ public class MagneticMoose
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
 
+        String value = interpreter.interpret(expression);
+
+        System.out.println(value);
+
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        // System.out.println(new AstPrinter().print(expression));
 
     }
 }

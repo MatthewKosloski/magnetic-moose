@@ -105,9 +105,12 @@ public class MagneticMoose
     private static void run(String source)
     {
         List<Token> tokens = new Lexer(source).getTokens();
-        Expr expression = new Parser(tokens).parse();
-        // System.out.println(new AstPrinter().print(expression));
-        System.out.println(interpreter.interpret(expression));
+
+        if (tokens.size() != 1)
+        {
+            Expr expression = new Parser(tokens).parse();
+            System.out.println(interpreter.interpret(expression)); 
+        }
     }
 
     /*

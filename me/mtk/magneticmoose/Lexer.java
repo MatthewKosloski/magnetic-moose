@@ -201,7 +201,8 @@ public class Lexer
      */
     private void consumeBlockComment()
     {
-        while (peek() != '*' && peekNext() != '/' && !isEndOfFile()) nextChar();       
+        while ((peek() != '*' && peekNext() != '/' 
+            || peek() == '*' && peekNext() != '/') && !isEndOfFile()) nextChar();
         
         // Consume the closing */
         nextChar();  

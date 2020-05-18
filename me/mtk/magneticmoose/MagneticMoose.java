@@ -106,6 +106,8 @@ public class MagneticMoose
     {
         List<Token> tokens = new Lexer(source).getTokens();
 
+        // Do not parse and interpret if the only
+        // token is EOF.
         if (tokens.size() != 1)
         {
             Expr expression = new Parser(tokens).parse();

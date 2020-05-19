@@ -100,14 +100,16 @@ public class Lexer
      */
     public String getLine(int n)
     {
-        if ((n - 1) < 0 || (n - 1) > lines.size() - 1)
+        int lineIndex = n - 1;
+
+        if (lineIndex < 0 || lineIndex > lines.size() - 1)
         {
             throw new IllegalArgumentException("Argument n must be an integer " +
                 "in the range [0, m - 1], where m is the amount of " +
                 "lines in the source program");
         }
 
-        Line line = lines.get(n - 1);
+        Line line = lines.get(lineIndex);
 
         return source.substring(line.beginIndex, line.endIndex);
     }

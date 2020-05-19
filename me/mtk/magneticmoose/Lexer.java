@@ -82,6 +82,7 @@ public class Lexer
             scanToken();
         }
 
+        // Add the last line
         lines.add(new Line(lineStart, position));
 
         // Append the end-of-file token to the list
@@ -94,8 +95,8 @@ public class Lexer
     /**
      * Returns the nth line of source.
      * 
-     * @param n 
-     * @return
+     * @param n A line number.
+     * @return The nth line of the source program.
      */
     public String getLine(int n)
     {

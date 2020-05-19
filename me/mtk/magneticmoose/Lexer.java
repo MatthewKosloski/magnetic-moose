@@ -24,9 +24,6 @@ public class Lexer
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
         }
-
-        public int getBeginIndex() { return beginIndex; }
-        public int getEndIndex() { return endIndex; }
     }
 
     // The source program, written in the language being interpreted.

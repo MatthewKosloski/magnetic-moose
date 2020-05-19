@@ -1,8 +1,8 @@
 package me.mtk.magneticmoose;
 
-public class RuntimeError extends InterpreterError
+public class ParseError extends InterpreterError
 {
-    public RuntimeError(Token token, String msg)
+    public ParseError(Token token, String msg)
     {
         super(token, msg);
     }
@@ -10,6 +10,6 @@ public class RuntimeError extends InterpreterError
     @Override
     public String getErrorName()
     {
-        return "RuntimeError";
+        return "ParseError";
     }
 }

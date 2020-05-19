@@ -4,7 +4,22 @@ In my quest to understand how interpeters for high-level programming languages w
 
 Instead of building it all in one go (which would be too overwhelming), I decided to break it up into iterations.  Each iteration will be an independent interpreter that is more complex than the last.
 
-Magnetic Moose is the first iteration of the Torrey interpreter.  The interpreter only interprets fully-parenthesized arithmetic expressions such as:
+Magnetic Moose is the first iteration of the Torrey interpreter.  The interpreter only interprets fully-parenthesized arithmetic expressions with a variable number of operands.
+
+## Grammar
+
+`Parser.java` implements the following grammar that describes the language's syntax:
+
+```
+program   -> binary ;
+binary    -> "(" ("+" | "-" | "*" | "/") unary (" " unary)+ ")" ;
+unary     -> ("+" | "-")? (binary | number) ;
+number    -> [0-9]+ "." [0-9]+ | [0-9]+ ;
+```
+
+## Code Example
+
+As demonstrated below, the language supports inline-comments using `//` or C-style block comments using `/* */`.
 
 ```
 // This is an inline-comment
@@ -33,11 +48,26 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 (* (- (* 10.5 5) 10) 2)
 ```
 
-The grammar is:
+## Error Reporting
+
+The goal of error handling is to inform the programmer of any syntax, parsing, or runtime errors.  Error messages provide what was expected and what was actually present. They also point to where the error occurred in the source program.
+
+Example error messages include:
 
 ```
-program   -> binary ;
-binary    -> "(" ("+" | "-" | "*" | "/") unary (" " unary)+ ")" ;
-unary     -> ("+" | "-")? (binary | number) ;
-number    -> [0-9]+ "." [0-9]+ | [0-9]+ ;
+program.in:1:9: ParseError: Expected ")" after expression but got "&" instead
+        (+ 2 344&)
+                ^
+```
+
+```
+program.in:1:1: ParseError: Expected an expression starting with "(" but got "%" instead
+        %+ 2 3)
+        ^
+```
+
+```
+program.in:1:7: ParseError: Expected either a number or "(" to come after the unary operator but got "-" instead
+        (+ 2 --(* 1 3))
+              ^
 ```

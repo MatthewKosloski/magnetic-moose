@@ -14,6 +14,9 @@ enum TokenType
     // Literal token
     NUMBER,
 
+    // Unidentified token,
+    UNIDENTIFIED,
+
     // End of file token
     EOF
 }

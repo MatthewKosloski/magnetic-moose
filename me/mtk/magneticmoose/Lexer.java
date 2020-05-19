@@ -18,6 +18,8 @@ public class Lexer
     // Parser as input.
     private List<Token> tokens = new ArrayList<>();
 
+    private List<String> lines = new ArrayList<>();
+
     // The line in source that is currently being processed.
     private int currentLineNumber = 1;
 
@@ -30,6 +32,8 @@ public class Lexer
     // lexeme currently being processed. This gets reset when
     // the Lexer begins constructing another Token.
     private int lexemeStart = 0;
+
+    private int lineStart = 0;
 
     // The current position in the source string (an index in source).
     // This member can take on any value in the range [0, n - 1], where
@@ -58,11 +62,23 @@ public class Lexer
             scanToken();
         }
 
+        lines.add(source.substring(lineStart, position));
+
         // Append the end-of-file token to the list
         tokens.add(new Token(TokenType.EOF, "", null,
             currentLineNumber, ++currentColumnNumber));
         
         return tokens;
+    }
+
+    public List<String> getLines()
+    {
+        return lines;
+    }
+
+    public String getLine(int n)
+    {
+        return lines.get(n - 1);
     }
 
     /*
@@ -104,11 +120,6 @@ public class Lexer
                 }
                 else
                 {
-                    // Unidentified character
-                    // MagneticMoose.error(
-                    //     String.format("Unexpected character \"%c\"", currentChar), 
-                    //     currentLineNumber, 
-                    //     currentColumnNumber); 
                     addToken(TokenType.UNIDENTIFIED, null);
                 }
                 break;
@@ -127,8 +138,10 @@ public class Lexer
         
         if (nextChar == '\n')
         {
+            lines.add(source.substring(lineStart, position - 1));
             currentLineNumber++;
             currentColumnNumber = 0;
+            lineStart = position;
         }
         else
             currentColumnNumber++;
@@ -328,5 +341,4 @@ public class Lexer
     {
         return c == ' ' || c == '\t' || c == '\r' || c == '\n';
     }
-
 }

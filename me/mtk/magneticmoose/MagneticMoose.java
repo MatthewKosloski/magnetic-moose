@@ -51,12 +51,6 @@ public class MagneticMoose
         }
     }
 
-    public static void error(String message, int line, int column)
-    {
-        displayErrorMessage("Error", message, line, column);
-        hadError = true;
-    }
-
     /**
      * Scans the source program for tokens,
      * creates an AST from the tokens, and 
@@ -67,7 +61,8 @@ public class MagneticMoose
      */
     private static void run(String source)
     {
-        List<Token> tokens = new Lexer(source).getTokens();
+        Lexer lexer = new Lexer(source);
+        List<Token> tokens = lexer.getTokens();
 
         // If the only token is EOF (no program), then don't try
         // to parse and interpret.
@@ -80,12 +75,14 @@ public class MagneticMoose
             }
             catch (ParseError err)
             {
-                displayErrorMessage(err);
+                String line = lexer.getLine(err.getToken().line);
+                displayErrorMessage(err, line);
                 hadError = true;
             }
             catch (RuntimeError err)
             {
-                displayErrorMessage(err);
+                String line = lexer.getLine(err.getToken().line);
+                displayErrorMessage(err, line);
                 hadRuntimeError = true;
             }
         }
@@ -131,25 +128,31 @@ public class MagneticMoose
         }
     }
 
-    private static void displayErrorMessage(String errorName, String message, 
-        int line, int column)
+    private static void displayErrorMessage(String errorName, String message, String line, 
+        int lineNumber, int columnNumber)
     {
         if(isInteractive)
         {
-            System.err.format("%s on column %d: %s\n", errorName, column,
-                message);
+            System.err.format("%s on column %d: %s\n", errorName, 
+                columnNumber, message);
         }
         else
         {
-            System.err.format("%s:%d:%d: %s: %s\n", filename, line, column,
-                errorName, message);
+            System.err.format("%s:%d:%d: %s: %s\n", filename, lineNumber, 
+                columnNumber, errorName, message);
         }
+        System.out.format("\t%s\n", line);
+        String columnPointer = "";
+        for(int i = 0; i < columnNumber - 1; i++)
+            columnPointer += " ";
+        columnPointer += "^";
+        System.out.format("\t%s\n", columnPointer);
     }
 
-    private static void displayErrorMessage(InterpreterError err)
+    private static void displayErrorMessage(InterpreterError err, String line)
     {
         Token token = err.getToken();
-        displayErrorMessage(err.getErrorName(), err.getMessage(),
+        displayErrorMessage(err.getErrorName(), err.getMessage(), line,
             token.line, token.column);
     }
 }

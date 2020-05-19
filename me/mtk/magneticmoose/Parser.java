@@ -98,8 +98,8 @@ public class Parser
             return expr;
         }
 
-        throw new ParseError(peek(), 
-            "Expected an expression starting with \"(\"");
+        throw new ParseError(peek(), String.format("Expected an expression " +
+            "starting with \"(\" but got \"%s\" instead", peek().lexeme));
     }
 
      /*

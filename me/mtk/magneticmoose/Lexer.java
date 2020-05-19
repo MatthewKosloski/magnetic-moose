@@ -10,6 +10,24 @@ import java.util.List;
 // Parser to construct an abstract syntax tree (AST).
 public class Lexer
 {
+    
+    // Stores the begin index and end index
+    // of a line in source. That is, a line
+    // is a substring of source.
+    private class Line
+    {
+        private final int beginIndex;
+        private final int endIndex;
+
+        public Line(int beginIndex, int endIndex)
+        {
+            this.beginIndex = beginIndex;
+            this.endIndex = endIndex;
+        }
+
+        public int getBeginIndex() { return beginIndex; }
+        public int getEndIndex() { return endIndex; }
+    }
 
     // The source program, written in the language being interpreted.
     private String source;
@@ -18,7 +36,8 @@ public class Lexer
     // Parser as input.
     private List<Token> tokens = new ArrayList<>();
 
-    private List<String> lines = new ArrayList<>();
+    // Stores the lines of source.
+    private List<Line> lines = new ArrayList<>();
 
     // The line in source that is currently being processed.
     private int currentLineNumber = 1;
@@ -33,6 +52,7 @@ public class Lexer
     // the Lexer begins constructing another Token.
     private int lexemeStart = 0;
 
+    // The index (in source) of the first character of the current line.
     private int lineStart = 0;
 
     // The current position in the source string (an index in source).
@@ -62,7 +82,7 @@ public class Lexer
             scanToken();
         }
 
-        lines.add(source.substring(lineStart, position));
+        lines.add(new Line(lineStart, position));
 
         // Append the end-of-file token to the list
         tokens.add(new Token(TokenType.EOF, "", null,
@@ -71,14 +91,24 @@ public class Lexer
         return tokens;
     }
 
-    public List<String> getLines()
-    {
-        return lines;
-    }
-
+    /**
+     * Returns the nth line of source.
+     * 
+     * @param n 
+     * @return
+     */
     public String getLine(int n)
     {
-        return lines.get(n - 1);
+        if ((n - 1) < 0 || (n - 1) > lines.size() - 1)
+        {
+            throw new IllegalArgumentException("Argument n must be an integer " +
+                "in the range [0, m - 1], where m is the amount of " +
+                "lines in the source program");
+        }
+
+        Line line = lines.get(n - 1);
+
+        return source.substring(line.beginIndex, line.endIndex);
     }
 
     /*
@@ -138,7 +168,7 @@ public class Lexer
         
         if (nextChar == '\n')
         {
-            lines.add(source.substring(lineStart, position - 1));
+            lines.add(new Line(lineStart, position - 1));
             currentLineNumber++;
             currentColumnNumber = 0;
             lineStart = position;

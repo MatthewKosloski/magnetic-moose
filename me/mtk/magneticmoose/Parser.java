@@ -135,7 +135,7 @@ public class Parser
         }
         
         throw new ParseError(peek(), "Expected an expression starting " +
-            "with either \"(\", \"+\", \"-\", or NUMBER");
+            "with either \"(\", \"+\", \"-\", or a number");
     }
 
     /*
@@ -151,7 +151,9 @@ public class Parser
             return new Expr.Number((double) previous().literal);
         }
 
-        throw new ParseError(peek(), "Expected a number expression");
+        throw new ParseError(peek(), String.format("Expected either a number " + 
+            "or \"(\" to come after the unary operator " +
+            "but got \"%s\" instead", peek().lexeme));
     }
 
     /*

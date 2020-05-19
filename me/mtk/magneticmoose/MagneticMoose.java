@@ -51,47 +51,10 @@ public class MagneticMoose
         }
     }
 
-    /**
-     * Sends an error message to the standard error stream.
-     *
-     * @param message A custom message describing the error.
-     * @param line The line number where the error is located.
-     * @param column The column number where the error is located.
-     */
     public static void error(String message, int line, int column)
     {
-        if(!isInteractive)
-        {
-            System.err.format("%s:%d:%d: error: %s\n", filename, 
-                line, column, message);
-        }
-        else
-        {
-            System.err.format("Error on column %d: %s\n", column, message);
-        }
+        displayErrorMessage("Error", message, line, column);
         hadError = true;
-    }
-
-    /**
-     * Sends a RuntimeError message to the standard error stream.
-     * 
-     * @param err A Runtime error.
-     */
-    public static void runtimeError(RuntimeError err)
-    {
-        Token token = err.token;
-
-        if(!isInteractive)
-        {
-            System.err.format("%s:%d:%d: RuntimeError: %s\n", filename, 
-                token.line, token.column, err.getMessage());
-        }
-        else
-        {
-            System.err.format("RuntimeError on column %d: %s\n", 
-                token.column, err.getMessage());
-        }
-        hadRuntimeError = true;
     }
 
     /**
@@ -106,12 +69,25 @@ public class MagneticMoose
     {
         List<Token> tokens = new Lexer(source).getTokens();
 
-        // Do not parse and interpret if the only
-        // token is EOF.
+        // If the only token is EOF (no program), then don't try
+        // to parse and interpret.
         if (tokens.size() != 1)
         {
-            Expr expression = new Parser(tokens).parse();
-            System.out.println(interpreter.interpret(expression)); 
+            try
+            {
+                Expr expr = new Parser(tokens).parse();
+                System.out.println(interpreter.interpret(expr)); 
+            }
+            catch (ParseError err)
+            {
+                displayErrorMessage(err);
+                hadError = true;
+            }
+            catch (RuntimeError err)
+            {
+                displayErrorMessage(err);
+                hadRuntimeError = true;
+            }
         }
     }
 
@@ -153,5 +129,27 @@ public class MagneticMoose
 			run(reader.readLine());
 			hadError = false;
         }
+    }
+
+    private static void displayErrorMessage(String errorName, String message, 
+        int line, int column)
+    {
+        if(isInteractive)
+        {
+            System.err.format("%s on column %d: %s\n", errorName, column,
+                message);
+        }
+        else
+        {
+            System.err.format("%s:%d:%d: %s: %s\n", filename, line, column,
+                errorName, message);
+        }
+    }
+
+    private static void displayErrorMessage(InterpreterError err)
+    {
+        Token token = err.getToken();
+        displayErrorMessage(err.getErrorName(), err.getMessage(),
+            token.line, token.column);
     }
 }

@@ -14,18 +14,10 @@ public class Interpreter implements Expr.Visitor<Object>
      * @param expression An AST representing the source program.
      * @return A string represnting the output of the program.
      */
-    public String interpret(Expr expression)
+    public String interpret(Expr expression) throws RuntimeError
     {
-        try
-        {
-            Object value = evaluate(expression);
-            return stringify(value);
-        }
-        catch (RuntimeError err)
-        {
-            MagneticMoose.runtimeError(err);
-        }
-        return null;
+        Object value = evaluate(expression);
+        return stringify(value);
     }
 
     @Override

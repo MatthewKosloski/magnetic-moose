@@ -14,8 +14,6 @@ import java.util.List;
 // to the user.
 public class Parser 
 {
-    private static class ParseError extends RuntimeException {}
-
     // The tokens of the source program. These come from
     // the Lexer.
     private final List<Token> tokens;
@@ -43,16 +41,9 @@ public class Parser
      * 
      * @return A tree of expressions representing the program.
      */
-    public Expr parse()
+    public Expr parse() throws ParseError
     {
-        try
-        {
-            return program();
-        }
-        catch(ParseError err)
-        {
-            return null;
-        }
+        return program();
     }
 
     /*
@@ -76,7 +67,15 @@ public class Parser
     {
         if (match(TokenType.LPAREN))
         {
+            if (!isValidBinaryOperator(peek()))
+            {
+                throw new ParseError(peek(), String.format("Expected a binary " 
+                    + "operator \"+\", \"-\", \"*\", or \"/\" but got \"%s\" "
+                    + "instead", peek().lexeme));
+            }
+            
             Token operator = nextToken();
+
             Expr first = unary();
             Expr second = unary();
             Expr expr = new Expr.Binary(operator, first, second);
@@ -87,14 +86,20 @@ public class Parser
                 second = unary();
                 expr = new Expr.Binary(operator, expr, second);
             }
-    
-            consume(TokenType.RPAREN, String.format("Expected \")\" after " +
-                "expression but got \"%s\" instead.", peek().lexeme));
+            
+            String consumeMsg = String.format("Expected \")\" after " +
+            "expression but got \"%s\" instead", peek().lexeme);
+
+            if (peek().lexeme == "")
+                consumeMsg = String.format("Missing \")\" after expression");
+            
+            consume(TokenType.RPAREN, consumeMsg);
             
             return expr;
         }
 
-        throw error(peek(), "Expected an expression starting with \"(\".");
+        throw new ParseError(peek(), 
+            "Expected an expression starting with \"(\"");
     }
 
      /*
@@ -129,7 +134,8 @@ public class Parser
             return number();
         }
         
-        throw error(peek(), "Expected an expression starting with either \"(\", \"+\", \"-\", or NUMBER");
+        throw new ParseError(peek(), "Expected an expression starting " +
+            "with either \"(\", \"+\", \"-\", or NUMBER");
     }
 
     /*
@@ -145,7 +151,7 @@ public class Parser
             return new Expr.Number((double) previous().literal);
         }
 
-        throw error(peek(), "Expected a number expression.");
+        throw new ParseError(peek(), "Expected a number expression");
     }
 
     /*
@@ -182,7 +188,7 @@ public class Parser
     private Token consume(TokenType type, String msg)
     {
         if (isNextTokenOfType(type)) return nextToken();
-        throw error(peek(), msg);
+        throw new ParseError(peek(), msg);
     }
 
     /*
@@ -258,16 +264,10 @@ public class Parser
         return tokens.get(position - 1);
     }
 
-    /*
-     * Error handler.
-     * 
-     * @param token The token the caused the error.
-     * @param msg The error message.
-     * @return a parse error.
-     */
-    private ParseError error(Token token, String msg)
+    private boolean isValidBinaryOperator(Token operator)
     {
-        MagneticMoose.error(msg, token.line, token.column);
-        return new ParseError();
+        return (operator.type == TokenType.PLUS || operator.type == TokenType.MINUS ||
+            operator.type == TokenType.STAR || operator.type == TokenType.SLASH);
     }
+
 }

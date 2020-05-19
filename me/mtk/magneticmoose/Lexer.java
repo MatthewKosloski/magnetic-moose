@@ -105,10 +105,11 @@ public class Lexer
                 else
                 {
                     // Unidentified character
-                    String errMsg = String.format("Unexpected character \"%c\"" + 
-                        " found", currentChar);
-                    MagneticMoose.error(errMsg, currentLineNumber, 
-                        currentColumnNumber); 
+                    // MagneticMoose.error(
+                    //     String.format("Unexpected character \"%c\"", currentChar), 
+                    //     currentLineNumber, 
+                    //     currentColumnNumber); 
+                    addToken(TokenType.UNIDENTIFIED, null);
                 }
                 break;
         }

@@ -77,3 +77,26 @@ program.in:1:2: RuntimeError: Cannot divide by 0
         (/ 999 (+ 5 -5))
          ^
 ```
+
+## REPL Demo
+
+```
+> (
+ParseError on column 2: Expected a binary operator "+", "-", "*", or "/"
+        (
+         ^
+> (/
+ParseError on column 3: Expected an expression starting with either "(", "+", "-", or a number
+        (/
+          ^
+> (/ 5
+ParseError on column 5: Expected an expression starting with either "(", "+", "-", or a number
+        (/ 5
+            ^
+> (/ 5 4
+ParseError on column 7: Missing ")" after expression
+        (/ 5 4
+              ^
+> (/ 5 4)
+1.25
+```

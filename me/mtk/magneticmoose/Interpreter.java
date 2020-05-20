@@ -59,7 +59,7 @@ public class Interpreter implements Expr.Visitor<Object>
                 return (double) first * (double) second;
             case SLASH:
                 if ((double) second == 0)
-                    throw new RuntimeError(operator, "Cannot divide by 0.");
+                    throw new RuntimeError(operator, "Cannot divide by 0");
                 else
                     return (double) first / (double) second;
         }

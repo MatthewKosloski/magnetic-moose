@@ -71,3 +71,9 @@ program.in:1:7: ParseError: Expected either a number or "(" to come after the un
         (+ 2 --(* 1 3))
               ^
 ```
+
+```
+program.in:1:2: RuntimeError: Cannot divide by 0.
+        (/ 999 (+ 5 -5))
+         ^
+```

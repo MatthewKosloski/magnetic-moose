@@ -1,8 +1,11 @@
 package me.mtk.magneticmoose;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // The Interpreter is the part of the interpreter that, well,
 // interprets the source code. It takes in an abstract syntax
-// tree (AST) as input and outputs a string representing
+// tree (AST) as input and outputs a list of strings representing
 // the output of the program.
 public class Interpreter implements Expr.Visitor<Object>
 {
@@ -11,13 +14,17 @@ public class Interpreter implements Expr.Visitor<Object>
      * Interprets the source program by walking, or traversing,
      * the given AST in post-order. 
      * 
-     * @param expression An AST representing the source program.
-     * @return A string represnting the output of the program.
+     * @param expressions A list of expressions to interpret.
+     * @return A corresponding list of values of the provided expressions.
      */
-    public String interpret(Expr expression) throws RuntimeError
+    public List<String> interpret(List<Expr> expressions) throws RuntimeError
     {
-        Object value = evaluate(expression);
-        return stringify(value);
+        List<String> values = new ArrayList<>();
+
+        for (Expr expr : expressions)
+            values.add(stringify(evaluate(expr)));
+        
+        return values;
     }
 
     @Override

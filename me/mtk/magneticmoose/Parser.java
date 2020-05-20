@@ -1,6 +1,7 @@
 package me.mtk.magneticmoose;
 
 import java.util.List;
+import java.util.ArrayList;
 
 // The Parser is the part of the interpreter that takes
 // a list of Token objects as input and, from those tokens, 
@@ -39,9 +40,9 @@ public class Parser
     /**
      * Parses the program.
      * 
-     * @return A tree of expressions representing the program.
+     * @return A list of expressions representing the program.
      */
-    public Expr parse() throws ParseError
+    public List<Expr> parse() throws ParseError
     {
         return program();
     }
@@ -50,11 +51,16 @@ public class Parser
      * Implements the following production rule:
      * program -> binary ;
      *
-     * @return An expression.
+     * @return A list of expressions to be interpreted.
      */
-    private Expr program()
+    private List<Expr> program()
     {
-        return binary();
+        List<Expr> expressions = new ArrayList<>();
+        
+        while (hasTokens()) 
+            expressions.add(binary());
+        
+        return expressions;
     }
 
     /*

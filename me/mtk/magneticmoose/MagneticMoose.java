@@ -70,8 +70,12 @@ public class MagneticMoose
         {
             try
             {
-                Expr expr = new Parser(tokens).parse();
-                System.out.println(interpreter.interpret(expr)); 
+                List<Expr> expressions = new Parser(tokens).parse();
+                List<String> values = interpreter.interpret(expressions);
+
+                // Send the values of the expressions to stdout.
+                for(String value : values)
+                    System.out.println(value);
             }
             catch (ParseError err)
             {

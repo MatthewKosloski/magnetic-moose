@@ -1,11 +1,24 @@
-//(+ +1 -1 1)
+// This is an inline-comment
+
+(+ 4 4)
+(+ 1 2 3)
+
+// These
+// are
+// multiple
+// inline comments!
+(+ 5 (* 2 2.25) 6)
+
+/* This is an inline C-style comment block */
+
+(* -(+ +2 -3) -2 +(* 9 -3))
 
 /*
-    Evaluates to:
-    (6 * -2) - (6 * -2) + (4 * 4) = 16
+    This is a multi-line
+    C-style comment block :)
+*/ (/ 47 7)
 
-    Equivalent expressions are:
-    (+ (* 6 -2) -(* 6 -2) (* 4 4))
-    (+(*6-2)-(*6-2)(*4 4))
+/*
+    ...and another one
 */
-(+ +(* +6 -2) -(* +6 -2) +(* +4 +4))
+(* (- (* 10.5 5) 10) 2)

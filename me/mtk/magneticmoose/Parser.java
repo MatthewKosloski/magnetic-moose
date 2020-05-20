@@ -75,9 +75,17 @@ public class Parser
         {
             if (!isValidBinaryOperator(peek()))
             {
-                throw new ParseError(peek(), String.format("Expected a binary " 
+                if (peek().lexeme == "")
+                {
+                    throw new ParseError(peek(), "Expected a binary " 
+                    + "operator \"+\", \"-\", \"*\", or \"/\"");
+                }
+                else
+                {
+                    throw new ParseError(peek(), String.format("Expected a binary " 
                     + "operator \"+\", \"-\", \"*\", or \"/\" but got \"%s\" "
                     + "instead", peek().lexeme));
+                }
             }
             
             Token operator = nextToken();

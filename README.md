@@ -11,7 +11,7 @@ Magnetic Moose is the first iteration of the Torrey interpreter.  The interprete
 `Parser.java` implements the following grammar that describes the language's syntax:
 
 ```
-program   -> binary ;
+program   -> binary* EOF ;
 binary    -> "(" ("+" | "-" | "*" | "/") unary (" " unary)+ ")" ;
 unary     -> ("+" | "-")? (binary | number) ;
 number    -> [0-9]+ "." [0-9]+ | [0-9]+ ;
